@@ -7,7 +7,7 @@
 声音频段中有高频部分和低频部分，图片像素中也可以将信息分为高频信息和低频信息，低频信息中包含那些缓慢变化的、结构性的信息，而高频信息一般包含那些变化较大、包含图片细节的信息，因此我们可以把一张图片认为是高频信息和低频信息的混合表示。下图是一个图像的高频信息和低频信息分离表示。
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_16-09-53.jpg" width=100% height=100%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-09-53.jpg" width=100% height=100%>
 
 
 为了提高CNN的性能和准确率，有很多的工作致力于减少**模型参数**内在的冗余，在加快训练速度的同时能够获得更多正交的高级特征从而提高模型的表示能力，但是实际上每一层CNN输出的**特征图**也存在着大量的冗余，我们以原始输入为例，图片的每一个像素之间并不是孤立的，相邻的元素之间存在着密切的联系，将它们联合在一起存储表示往往能够更加准确的描述图片的信息，所以我们以单一像素的形式存储是及其浪费存储和计算资源的。
@@ -29,13 +29,13 @@
 ResNet、DenseNet通过增加跨越多层的快捷连接来加强特征的重用，同时也是为了减轻梯度消失问题，降低了优化的困难。如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_16-04-43.jpg" >
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-04-43.jpg" >
 
 因为我们可以在现有网络结构上直接堆叠一个恒等映射层，也就是一个什么都不做的层，而不影响整体的效果，所以深层网络不应该比稍浅一些的网络造成更大的误差，所以ResNet引入了残差块，并且希望该结构能够fit剩余映射，而不是直接去fit底层映射。ResNet并不是第一个利用快捷连接的神经网络，Highway Network首次引入了Gated shortcut connections，用于控制通过该连接的信息量，同样的思想我们还可以在LSTM的设计中发现，它利用不同的门控单元来控制信息的流动。
 ResNeXt和ShuffleNet框架利用稀疏连接的分组卷积方法来降低不同通道之间的冗余性，如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_16-05-02.jpg">
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-05-02.jpg">
 
 Xception和MobileNet使用深度可分离卷积层来减小连接的密集程度。
 
@@ -51,7 +51,7 @@ Xception和MobileNet使用深度可分离卷积层来减小连接的密集程度
 为了减少这种空间冗余性，我们引入了Octave特征表示，显示的将特征图分成了高频和低频两部分。假设输入特征图为$X \in R^{c*h*w}$，其中c是通道数，h、w是特征图的尺寸，我们在通道维度将特征图分为两部分，即$X=\{X^H, X^L\}$，其中，$X^H \in R^{(1-\alpha)c*h*w}，X^L \in R^{\alpha c * \frac{h} {2}* \frac{w}{2}}, \ \ \alpha \in \{0,1\}$，$\alpha$表示通道被分配到低频部分的比例。如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_16-05-09.jpg" width=50% height=50%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-05-09.jpg" width=50% height=50%>
 
 ### 3.2 Octave 卷积
 上面介绍的Octave特征表示降低了低频信息的空间冗余性，并且比正常CNN特征表示更加复杂，所以不能直接被正常的CNN所处理，一直比较Naive的做法是对低频表示进行上采样使其达到和高频信息一致的尺寸然后组合这两个部分，就可以得到能够被普通CNN处理的数据格式，但是这种做法即增加了内存的消耗，也增加了大量的计算。因此，本文设计了可以直接处理$X=\{X^H, X^L\}$这种特征表示的卷积层：Octave  Convolution。
@@ -70,12 +70,12 @@ $$
 如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_13-24-44.jpg" width=50%, height=50%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_13-24-44.jpg" width=50%, height=50%>
 
 为了上面的计算，我们将卷积核W分成四个部分$W=\{W^H, W^L\}=\{W^{H\rightarrow H}, W^{H\rightarrow L}, W^{L\rightarrow L}, W^{L\rightarrow H}\}$，如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Snipaste_2019-04-18_16-05-30.jpg" width=50%, height=50%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-05-30.jpg" width=50%, height=50%>
 
 对于频内信息交流，我们直接使用普通的CNN卷积计算，对于频间的信息交流，我们将上/下采样和卷积操作放在一起，避免了显示的计算和存储采样结果。公式如下：
 $$
