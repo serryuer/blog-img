@@ -1,40 +1,9 @@
----
-title: A Fast Learning Algorithm for Deep Belief Nets - 论文学习
-date: 2019-04-04 20:23:43
-tags:
-- RBM
-- Graphic Model
-- Deep Belief Nets
-- Wake-Sleep Algorithm
-category:
-- Deep Learnning
-- Notes
----
-<!-- TOC -->
-
-- [摘要](#%E6%91%98%E8%A6%81)
-- [介绍](#%E4%BB%8B%E7%BB%8D)
-- [互补先验](#%E4%BA%92%E8%A1%A5%E5%85%88%E9%AA%8C)
-  - [一个带约束权的无限有向模型](#%E4%B8%80%E4%B8%AA%E5%B8%A6%E7%BA%A6%E6%9D%9F%E6%9D%83%E7%9A%84%E6%97%A0%E9%99%90%E6%9C%89%E5%90%91%E6%A8%A1%E5%9E%8B)
-- [限制玻尔兹曼机和对比散度学习](#%E9%99%90%E5%88%B6%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E6%9C%BA%E5%92%8C%E5%AF%B9%E6%AF%94%E6%95%A3%E5%BA%A6%E5%AD%A6%E4%B9%A0)
-- [一种转换表示的贪婪学习算法](#%E4%B8%80%E7%A7%8D%E8%BD%AC%E6%8D%A2%E8%A1%A8%E7%A4%BA%E7%9A%84%E8%B4%AA%E5%A9%AA%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95)
-- [Some Ideas Based on DBN](#some-ideas-based-on-dbn)
-  - [Nonlinear Dimensionality Reduction](#nonlinear-dimensionality-reduction)
-- [Learning Semantic Address Space (SAS) for Fast Document Retrieval](#learning-semantic-address-space-sas-for-fast-document-retrieval)
-- [Learning Nonlinear Embeddings](#learning-nonlinear-embeddings)
-- [参考文献](#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE)
-
-<!-- /TOC -->
-
-<!--more-->
-
-
-
-##  摘要
+@[TOC]
+## 1 摘要
 
 explaining away现象的存在使得稠密连接、拥有多个隐藏层的深度信念网络的训练变的困难，我们提出了使用互补先验来解决这一问题。使用互补先验，我们推导出一种快速、贪婪的算法，可以每次学习深层的有向信念网络中的一层，该网络的最上面两层形成了一个无向联想记忆。该算法用于初始化一个比较慢的学习算法，使用Wake-Sleep算法进行调整网络参数。一个经过调整的三层神经网络可以对手写数字识别数据进行很好的建模。
 
-## 介绍
+## 2 介绍
 
 在稠密连接的多层有向信念网络中很难根据给定的输入向量推断隐藏单元的条件分布，因此其学习是十分困难的。变分学习方法可以对其真实的分布进行简单的近似，但是这种近似效果可能很差。而且，变分学习需要同时学习所有的参数，所以当网络参数规模增长的时候，这种学习方法的扩展性很差。
 
@@ -56,11 +25,11 @@ explaining away现象的存在使得稠密连接、拥有多个隐藏层的深�
 
 第七部分展示了当使用该模型生成数据的时候，内部神经元到底是怎么变化的。
 
-## 互补先验
+## 3 互补先验
 
 explaining away现象的存在是的有向信念网络的推断边的困难，在稠密连接的网络中，隐变量的后验分布是难以处理的，只有少数特殊情况例外，如混合模型或线性模型加上高斯噪声。MCMC系列的采样方法可以从这种后验分布中采样，但是非常耗时。变分方法(Neal & Hinton, 1998)用更易于处理的分布近似真实后验，可以提高训练数据对数概率的下限。
 
-complementary prior就是在第一层hidden unit上再加一层或多层Sigmoid，并且拥有和visible到hidden相反作用的weight。目的是为了抵消explaining away现象，该现象使得p(h|v)对于不同的hi不可分解。具体的原理请参照Learning Deep Architecture for AI里的数学式。写出p(h|v)之后你会发现它依赖于likelihood而这个的式子无法分解，于是这里我们假设式子里有一个先验分布，使得其乘上似然之后得到的p(h|v)能够被分解为p(hi|v)的乘积。这个先验就是complementary prior。对于一个单层SBN，其补完先验就是无数多层的SBN，且相互之间互绑weight，至于为什么是这个请看数学式。这个模型也等同于一层的RBM。 
+complementary prior就是在第一层hidden unit上再加一层或多层Sigmoid，并且拥有和visible到hidden相反作用的weight。目的是为了抵消explaining away现象，该现象使得p(h|v)对于不同的hi不可分解。具体的原理请参照Learning Deep Architecture for AI里的数学式。写出p(h|v)之后你会发现它依赖于likelihood而这个的式子无法分解，于是这里我们假设式子里有一个先验分布，使得其乘上似然之后得到的p(h|v)能够被分解为p(hi|v)的乘积。这个先验就是complementary prior。对于一个单层SBN，其补完先验就是无数多层的SBN，且相互之间互绑weight，这个模型也等同于一层的RBM。 
 
 Sigmoid信念网络是一种简单的由随机二值神经元组成的网络，当其被用于生成数据时，单元i的条件概率分布如下：
 
@@ -68,6 +37,7 @@ $$p(s_i=1)=\frac{1}{1+exp(-b_i- \sum_js_jw_{ij})}$$
 
 其中$b_i$是单元i的偏置，$w_{ij}$是单元i和单元j的连接权重。如果一个logistic信念网络只有一个隐藏层，那么其概率分布是所有隐藏单元的连乘。后验分布的不独立性是由来自数据中的似然项决定的。也许我们可以通过使用额外的隐藏层来创建一个“互补”的先验，从而消除在第一个隐藏层中的explaining away现象，这个“互补”的先验与那些在似然项中的先验具有完全相反的相关性。然后我们就可以获得互相独立的隐藏单元。但是我们并不清楚这个互补的先验是否存在，图三展示了一个无限的逻辑信念网络，它的权值是有限的，其中先验在每一个隐层都是互补的。使用tied weights来构造互补的优先级，这看起来像是一个使有向模型等价于无向模型的简单技巧。但是，正如我们将看到的，它导致了一种新颖且非常有效的学习算法，该算法通过逐步地将每一层的权重从更高层的权重中分离出来来工作。
 
+im
 ![infinite logistic belief net with tied weights][1]
 
 ###  一个带约束权的无限有向模型
@@ -78,6 +48,7 @@ $$p(s_i=1)=\frac{1}{1+exp(-b_i- \sum_js_jw_{ij})}$$
 
 RBM是一个无向二部图模型，等价于一个具有约束权的无限深逻辑信念网络。RBM通过从随机状态开始并执行交替吉布斯采样，直到平衡。理论上，这需要无限次才能达到平衡。这等价于通过一个无限深的有向网络进行传播。换句话说，我们在空间展开吉布斯采样步骤。如下图所示。
 
+im
 ![RBMs][2]
 
 由于受限玻尔兹曼机的特殊结构，因此可以使用一种比吉布斯采样更有效的学习算法，即对比散度（Contrastive Divergence）[Hinton, 2002]。对比散度法仅需k 步吉布斯采样。

@@ -1,0 +1,9 @@
+{
+    "add imgae for blog": {
+        "prefix": "img",
+        "body": [
+            "<img src=\"https://github.com/serryuer/blog-img/raw/master/imgs/\" width=50% height=50%"/>
+        ],
+        "description": "add image link for blog"
+    }
+}
