@@ -1,9 +1,32 @@
 {
+    // Place your blog-img workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+    // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+    // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+    // used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+    // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+    // Placeholders with the same ids are connected.
+    // Example:
+    // "Print to console": {
+    // 	"scope": "javascript,typescript",
+    // 	"prefix": "log",
+    // 	"body": [
+    // 		"console.log('$1');",
+    // 		"$2"
+    // 	],
+    // 	"description": "Log output to console"
+    // }
     "add imgae for blog": {
         "prefix": "img",
         "body": [
-            "<img src=\"https://github.com/serryuer/blog-img/raw/master/imgs/\" width=50% height=50%"/>
+            "<center>\n<img src=\"https://github.com/serryuer/blog-img/raw/master/imgs/\" width=50% height=50%/>"
         ],
         "description": "add image link for blog"
+    },
+    "test": {
+        "prefix": "test",
+        "body": [
+            "test snippet"
+        ],
+        "description": "test"
     }
 }
