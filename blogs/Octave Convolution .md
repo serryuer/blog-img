@@ -9,7 +9,7 @@
 声音频段中有高频部分和低频部分，图片像素中也可以将信息分为高频信息和低频信息，低频信息中包含那些缓慢变化的、结构性的信息，而高频信息一般包含那些变化较大、包含图片细节的信息，因此我们可以把一张图片认为是高频信息和低频信息的混合表示。下图是一个图像的高频信息和低频信息分离表示。
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-09-53.jpg" width=100% height=100%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-09-53.jpg" width=75% height=75%>
 
 
 为了提高CNN的性能和准确率，有很多的工作致力于减少**模型参数**内在的冗余，在加快训练速度的同时能够获得更多正交的高级特征从而提高模型的表示能力，但是实际上每一层CNN输出的**特征图**也存在着大量的冗余，我们以原始输入为例，图片的每一个像素之间并不是孤立的，相邻的元素之间存在着密切的联系，将它们联合在一起存储表示往往能够更加准确的描述图片的信息，所以我们以单一像素的形式存储是及其浪费存储和计算资源的。
@@ -31,13 +31,13 @@
 ResNet、DenseNet通过增加跨越多层的快捷连接来加强特征的重用，同时也是为了减轻梯度消失问题，降低了优化的困难。如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-04-43.jpg" >
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-04-43.jpg" width=50% heith=50%/>
 
 因为我们可以在现有网络结构上直接堆叠一个恒等映射层，也就是一个什么都不做的层，而不影响整体的效果，所以深层网络不应该比稍浅一些的网络造成更大的误差，所以ResNet引入了残差块，并且希望该结构能够fit剩余映射，而不是直接去fit底层映射。ResNet并不是第一个利用快捷连接的神经网络，Highway Network首次引入了Gated shortcut connections，用于控制通过该连接的信息量，同样的思想我们还可以在LSTM的设计中发现，它利用不同的门控单元来控制信息的流动。
 ResNeXt和ShuffleNet框架利用稀疏连接的分组卷积方法来降低不同通道之间的冗余性，如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-05-02.jpg">
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_16-05-02.jpg" width=50% heith=50%/>
 
 Xception和MobileNet使用深度可分离卷积层来减小连接的密集程度。
 
@@ -72,7 +72,7 @@ $$
 如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_13-24-44.jpg" width=50%, height=50%>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-18_13-24-44.jpg" width=75%, height=75%>
 
 为了上面的计算，我们将卷积核W分成四个部分$W=\{W^H, W^L\}=\{W^{H\rightarrow H}, W^{H\rightarrow L}, W^{L\rightarrow L}, W^{L\rightarrow H}\}$，如下图所示：
 
@@ -107,7 +107,7 @@ $$
 上一节中我们提到下采样时使用平均池化的思想，而不是一般的Strided convolution，具体原因如下图：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_11-19-53.jpg" width=50% height=50%/>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_11-19-53.jpg" width=60% height=60%/>
 
 如文中所述，使用Strided convolution会导致输出的特征图偏移。
 
@@ -122,7 +122,7 @@ Octave Convolution还适用于一些常见变种卷积类型，比Group Convoolu
 具体来说就是对于输入$X \in \mathcal{R}^{c_1*h*w}$，普通卷积方式是用$c_2$个大小为$c_1*k*k$的卷积核对输入进行卷积计算，其中$c_2$是输出通道数，$c_1$是输入通道数，*h,w*是输入特征图大小，$k*k$是卷积核大小，当输入规模很大时，这个计算需要很大的存储，因此我们可以将它分成两部分来计算，我们将输入和输出在通道那个维度切分成两个部分，将输入数据分成了2组（组数为g），需要注意的是，这种分组只是在深度上进行划分，即某几个通道编为一组，这个具体的数量由$c_1/g$决定。因为输出数据的改变，相应的，卷积核也需要做出同样的改变。即每组中卷积核的深度也就变成了$c_1/g$，而卷积核的大小是不需要改变的，此时每组的卷积核的个数就变成了$c_2/g$个，而不是原来的$c_2$了。然后用每组的卷积核同它们对应组内的输入数据卷积，得到了输出数据以后，再用concatenate的方式组合起来，最终的输出数据的通道仍旧是$c_2$。
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_11-54-54.png" width=50% height=50%/>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_11-54-54.png" width=75% height=75%/>
 
 我们可以看到分组卷积减少了大量的计算，但是同时由于直接简单的将输入按照通道分成了多个组，而多个组之间没有任何的信息交流，所以对特征的捕获是不利的。
 
@@ -156,7 +156,7 @@ Pointwise Convolution的运算与常规卷积运算非常相似，它的卷积�
 在几个流行框架上的测试结果如下图所示：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_15-27-01.png" width=50% height=50%/>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_15-27-01.png" width=80% height=80%/>
 
 观察结果如下：
 1. flops-accuracy权衡曲线为凹曲线，精度先上升后缓慢下降。
@@ -169,7 +169,7 @@ Pointwise Convolution的运算与常规卷积运算非常相似，它的卷积�
 见下图：
 
 <center>
-<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_16-10-00.png" width=50% height=50%/>
+<img src="https://github.com/serryuer/blog-img/raw/master/imgs/Octave/Snipaste_2019-04-20_16-10-00.png" width=200% height=100%/>
 
 
 ## 5 总结
