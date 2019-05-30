@@ -18,7 +18,7 @@
     "add imgae for blog": {
         "prefix": "img",
         "body": [
-            "<center>\n<img src=\"https://github.com/serryuer/blog-img/raw/master/imgs/\" width=50% height=50%/>"
+            "<center>\n<img src=\"https://github.com/serryuer/blog-img/raw/master/imgs/\" width=50% height=50%/>\n</center>"
         ],
         "description": "add image link for blog"
     },
